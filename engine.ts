@@ -127,7 +127,6 @@ export abstract class Scene {
 }
 
 export default class Engine {
-  private raylib: any;
   private currentScene: Scene | null = null;
   private scenes: Map<string, Scene> = new Map();
   private running: boolean = false;

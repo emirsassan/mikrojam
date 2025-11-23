@@ -6,9 +6,11 @@ import { CardComponent } from "./Card.ts";
 export class DeckComponent extends Component {
   private cardEntities: Entity[] = [];
   private spacing: number = 100;
+  public visible: boolean = true;
 
-  constructor(cardCount: number = 5) {
+  constructor(cardCount: number = 5, visible: boolean = true) {
     super();
+    this.visible = visible;
     this.initializeCards(cardCount);
   }
 
@@ -16,7 +18,7 @@ export class DeckComponent extends Component {
     for (let i = 0; i < count; i++) {
       const card = this.generateDeck();
       const cardEntity = new Entity(`Card_${i}`);
-      cardEntity.addComponent(new CardComponent(card.type, card.type.toString()));
+      cardEntity.addComponent(new CardComponent(card.type, card.type.toString(), card.value));
       this.cardEntities.push(cardEntity);
     }
   }
@@ -29,6 +31,10 @@ export class DeckComponent extends Component {
 
     for (let i = 0; i < this.cardEntities.length; i++) {
       const cardEntity = this.cardEntities[i];
+      const cardComponent = cardEntity.getComponent(CardComponent);
+      if (cardComponent) {
+        cardComponent.visible = this.visible;
+      }
       cardEntity.transform.position.x = baseX + (i * this.spacing);
       cardEntity.transform.position.y = baseY;
       cardEntity.update(deltaTime);
