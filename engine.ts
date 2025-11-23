@@ -1,3 +1,5 @@
+import { Drawing, RAYWHITE, Timing, Window } from "@lino/raylib";
+
 export interface Vector2 {
   x: number;
   y: number;
@@ -121,5 +123,79 @@ export abstract class Scene {
    * Override edicen bunu renderlamak için
    */
   render(): void {
+  }
+}
+
+export default class Engine {
+  private raylib: any;
+  private currentScene: Scene | null = null;
+  private scenes: Map<string, Scene> = new Map();
+  private running: boolean = false;
+
+  constructor(
+    width: number = 800,
+    height: number = 600,
+    title: string = "Game",
+  ) {
+    Window.init(width, height, title);
+  }
+
+  registerScene(scene: Scene): void {
+    this.scenes.set(scene.name, scene);
+  }
+
+  loadScene(sceneName: string): void {
+    const scene = this.scenes.get(sceneName);
+    if (!scene) {
+      console.error(`Scene "${sceneName}" not found`);
+      return;
+    }
+
+    if (this.currentScene) {
+      this.currentScene.unload();
+    }
+
+    this.currentScene = scene;
+    this.currentScene.load();
+  }
+
+  start(): void {
+    this.running = true;
+    this.gameLoop();
+  }
+
+  private gameLoop(): void {
+    while (this.running && !Window.shouldClose()) {
+      const deltaTime = Timing.getFrameTime();
+      Time.update(deltaTime);
+
+      // Update
+      if (this.currentScene) {
+        this.currentScene.update(deltaTime);
+      }
+
+      // Render
+      Drawing.beginDrawing()
+      Drawing.clearBackground(RAYWHITE);
+
+      if (this.currentScene) {
+        this.currentScene.render();
+      }
+
+      Drawing.endDrawing();
+    }
+
+    this.shutdown();
+  }
+
+  stop(): void {
+    this.running = false;
+  }
+
+  private shutdown(): void {
+    if (this.currentScene) {
+      this.currentScene.unload();
+    }
+    Window.close()
   }
 }

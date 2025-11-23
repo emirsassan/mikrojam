@@ -1,24 +1,37 @@
-import {
-  Drawing,
-  LIGHTGRAY,
-  RAYWHITE,
-  Text,
-  Window,
-} from "@lino/raylib";
+import { Text } from "@lino/raylib";
+import Engine, { Component, Entity, Scene } from "./engine.ts";
 
-Window.init(800, 450, "Raylib - Basic Window");
+class TestComponent extends Component {
+  constructor() {
+    super()
+  }
 
-while (!Window.shouldClose()) {
-  Drawing.beginDrawing();
-  Drawing.clearBackground(RAYWHITE);
-  Text.drawText(
-    "Congrats! You created your first window!",
-    190,
-    200,
-    20,
-    LIGHTGRAY,
-  );
-  Drawing.endDrawing();
+  override update(deltaTime: number): void {
+    Text.drawFPS(10, 10)
+  }
 }
 
-Window.close();
+class MainScene extends Scene {
+  constructor() {
+    super("MainScene")
+  }
+
+  override load(): void {
+    const fpsText = new Entity("FPSText")
+    fpsText.addComponent(new TestComponent())
+    this.addEntity(fpsText)
+  }
+
+  override unload(): void {
+    
+  }
+
+  override render(): void {
+    
+  }
+}
+
+const engine = new Engine(800, 600, "Mikrojamliyom");
+engine.registerScene(new MainScene());
+engine.loadScene("MainScene");
+engine.start();
