@@ -1,6 +1,6 @@
 {
   "tasks": {
-    "dev": "deno run --watch main.ts"
+    "dev": "deno run -A main.ts"
   },
   "imports": {
     "@lino/raylib": "jsr:@lino/raylib@^0.1.0",
